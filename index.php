@@ -1,18 +1,61 @@
 <?php
+//1. buat koneksi dg mysql
+$con = mysqli_connect("localhost","root","","fakultas");
 
-echo "Hellow World";
-$nama = "Putri Yunita Dwi Ababil";
-$umur = "21";
+//2. Cek koneksi dg mysql
+if(mysqli_connect_errno()){
+    echo "Koneksi gagal". mysqli_connect_error();
+} else{
+    echo "Koneksi berhasil";
+}
 
-echo "Nama saya <strong> $nama</strong>, saya berusia $umur tahun.";
+//3. membaca data dari table mysql;
+$query = "SELECT * FROM mahasiswa";
 
-$namaAdik = "Dwi Achmad rehan Syahputra";
-$umurAdik = "13";
+//4. tampilkan data, dengan menjalankan sql query
+$result = mysqli_query($con,$query);
+$mahasiswa = [];
+if ($result){
+    // tampilkan data satu per satu
+    while($row = mysqli_fetch_assoc($result)){
+        $mahasiswa[] = $row;
+        }
+    mysqli_free_result($result);
+}
 
-echo "Nama Adik Saya <strong> $namaAdik</strong>, Adik saya berusia $umurAdik tahun.<br>";
-
-$selisihUmur = $umur - $umurAdik;
-
-echo "Selisih usia saya dan adik saya adalah $selisihUmur tahun.";
-
+//5. tutup koneksi mysql
+mysqli_close($con);
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mahasiswa</title>
+</head>
+<body>
+    <h1>Data Mahasiswa</h1>
+    <a href="insert.php">Tambah Data</a>
+    <table border="1" style="width:100%;">
+        <tr>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Tempat Lahir</th>
+            <th>Action</th>
+        </tr>
+        <?php foreach($mahasiswa as $value): ?>
+        <tr>
+            <td><?php echo $value["nim"]; ?></td>
+            <td><?php echo $value["nama"]; ?> </td>
+            <td><?php echo $value["tempat_lahir"]; ?> </td>
+            <td>
+                <a href="<?php echo "update.php?id=".$value["id"]; ?>">Edit</a>
+                <a href="<?php echo "delete.php?id=".$value["id"]; ?>">Delete</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</body>
+</html>
